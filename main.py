@@ -35,7 +35,30 @@ fire(self):
 - appends the Bullet object to the players's bullet list
 '''
 class Player(Turtle):
-	pass
+	def __init__(self,screen,left_key,right_key,fire_key,x,y):
+		self.speed(0)
+		self.ht()
+		self.penup()
+		self.goto(x,y)
+		self.shape("turtle")
+		self.bullets = []
+		screen.onkeypress(self.rt(),right_key)
+		screen.onkeypress(self.lt(),left_key)
+		screen.onkeypress(self.fire(),fire_key)
+	
+	def rt(self):
+		self.rt(2)
+
+	def lt(self):
+		self.lt(2)
+
+	def move(self):
+		self.forward(5)
+
+	def fire(self):
+		pass
+
+
 
 '''
 Bullet() Class
@@ -59,8 +82,13 @@ die()
 #### DRIVER CODE ####
 screen = Screen()
 screen.bgcolor("black")
+screen.listen()
 
 playing_area()
 
+player1 = Player(screen,"Left","Right","Up",10,10)
+
+while True:
+	pass
 
 screen.mainloop()
