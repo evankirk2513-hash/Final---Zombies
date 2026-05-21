@@ -77,12 +77,19 @@ class Bomb(Turtle):
 		self.color(player.player_color)
 		self.shape("circle")
 		self.start = time.time()
-		self.shapesize(5,5)
+		self.shapesize(10,10)
 		self.st()
 
-	def remove(self):
+	def explode(self,zombies):
+		if time.time() - self.start > 1:
+			for zombie in zombies:
+				if zombie.distance(self) <= 200:
+					zombie.ht()
+					zombies.remove(zombie)
+	
+	def clear(self):
 		self.ht()
-		player.bombs.remove(self)	
+		player.bombs.remove(self)
 
 class Bullet(Turtle):
 	def __init__(self, player):
@@ -107,6 +114,7 @@ class Bullet(Turtle):
     
 	def remove(self):
 		if self in self.player.bullets:
+			self.speed(0)
 			self.ht()
 			self.player.bullets.remove(self)
 
@@ -180,13 +188,10 @@ while len(players) > 1:
 							zombie.remove()
 							zombies.remove(zombie)
 							player.score += 1
+		if len(player.bombs) > 1:
 			for bomb in player.bombs:
-				if len(zombies) > 0:
-					for zombie in zombies:
-						if zombie.distance(bomb) < 100:
-							zombie.remove()
-							zombies.remove(zombie)
-							player.score += 1
+				bomb.explode(zombies)
+				bomb.clear()
 	if player1.distance(spot) < 20 or player2.distance(spot) < 20:
 		for player in players:
 			for num in range(zombie_amount):
@@ -198,13 +203,13 @@ while len(players) > 1:
 			zombie.move()
 			if zombie.distance(zombie.target) < 20:
 				if zombie.target == player1:
-					player1.bullets = []
 					player1.die()
 					players.remove(player1)
 				elif zombie.target == player2:
-					player2.bullets = []
 					player2.die()
 					players.remove(player2)
+					
+	
 
 			
 
