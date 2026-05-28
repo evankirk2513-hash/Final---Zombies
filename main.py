@@ -173,7 +173,7 @@ class Score(Turtle):
 	def update_score(self):
 		self.clear()
 		str_score = str(self.score)
-		self.write("Player "+self.p_num+"'s score is: "+str_score)
+		self.write("Player "+self.p_num+"'s score is: "+str_score,font=("Arial",12))
 
 
 #### DRIVER CODE ####
@@ -188,12 +188,18 @@ player1 = Player(screen,generate_color(),"Left","Right","Up","Down")
 player2 = Player(screen,generate_color(),"a","d","w","s")
 players = [player1,player2]
 
-score1 = Score(-250, 260,screen,"One",0)
-score2 = Score(135, 260,screen,"Two",0)
+score1 = Score(-250, 265,screen,"One",0)
+score2 = Score(90, 265,screen,"Two",0)
 
 zombies = []
 zombie_amount = 2
 spot = Target()
+
+finish = Turtle()
+finish.ht()
+finish.penup()
+finish.goto(-70,0)
+finish.color("Black")
 
 while len(players) > 1:
 	for player in players:
@@ -231,6 +237,11 @@ while len(players) > 1:
 				elif zombie.target == player2:
 					player2.die()
 					players.remove(player2)
+
+if player1 in players:
+	finish.write("Player 1 Wins!",font=("Arial",20))
+elif player2 in players:
+	finish.write("Player 2 Wins!",font=("Arial",20))
 					
 	
 
