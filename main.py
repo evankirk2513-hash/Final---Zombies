@@ -31,7 +31,6 @@ class Player(Turtle):
 		self.goto(randint(-230,230),randint(-230,230))
 		self.shape("turtle")
 		self.bomb_count = 3
-		self.score = 0
 		self.bombs = []
 		self.bullets = []
 		self.alive = True
@@ -79,13 +78,17 @@ class Bomb(Turtle):
 		self.color(player.player_color)
 		self.shape("circle")
 		self.start = time.time()
-		self.shapesize(10,10)
 		self.st()
 
 	def explode(self,zombies):
-		for zombie in zombies:
-			if zombie.distance(self) <= 100:
-				zombie.die(zombies)
+		if time.time() - self.start > 1:
+			self.shapesize(10,10)
+			for zombie in zombies:
+				if zombie.distance(self) <= 100:
+					zombie.die(zombies)
+			if time.time() - self.start > 2:
+				self.ht()
+				player.bombs.remove(self)
 
 class Bullet(Turtle):
 	def __init__(self, player):
@@ -157,6 +160,21 @@ class Target(Turtle):
 		self.goto(randint(-230,230),randint(-230,230))
 		self.st()
 
+class Score(Turtle):
+	def __init__(self,x,y,screen,p_num,score):
+		super().__init__()
+		self.ht()
+		self.penup()
+		self.score = score
+		self.p_num = p_num
+		self.goto(x,y)
+		self.color("White")
+	
+	def update_score(self):
+		self.clear()
+		str_score = str(self.score)
+		self.write("Player "+self.p_num+"'s score is: "+str_score)
+
 
 #### DRIVER CODE ####
 screen = Screen()
@@ -169,6 +187,10 @@ start = time.time()
 player1 = Player(screen,generate_color(),"Left","Right","Up","Down")
 player2 = Player(screen,generate_color(),"a","d","w","s")
 players = [player1,player2]
+
+score1 = Score(-250, 260,screen,"One",0)
+score2 = Score(135, 260,screen,"Two",0)
+
 zombies = []
 zombie_amount = 2
 spot = Target()
@@ -183,12 +205,16 @@ while len(players) > 1:
 					for zombie in zombies:
 						if zombie.distance(bullet) < 20:
 							zombie.die(zombies)
-							player.score += 1
+							bullet.remove()
+							if player == player1:
+								score1.score += 1
+								score1.update_score()
+							elif player == player2:
+								score2.score += 1
+								score2.update_score()
 		if len(player.bombs) > 0:
 			for bomb in player.bombs:
 				bomb.explode(zombies)
-				bomb.ht()
-				player.bombs = []
 	if player1.distance(spot) < 20 or player2.distance(spot) < 20:
 		for player in players:
 			for num in range(zombie_amount):
